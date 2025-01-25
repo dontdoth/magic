@@ -11,8 +11,8 @@ async def handle_start(bot:Client, message:Message):
 
     Btn = [
         [InlineKeyboardButton(text='🌷 Hᴇʟᴘ 🌷', callback_data='help'), InlineKeyboardButton(text='🌷 Sᴇʀᴠᴇʀ Sᴛᴀᴛs 🌷', callback_data='server')],
-        [InlineKeyboardButton(text='🌷 Uᴘᴅᴀᴛᴇs 🌷', url='https://t.me/BRANDED_PAID_CC'), InlineKeyboardButton(text='🌷 Aʙᴏᴜᴛ 🌷', callback_data='about')],
-        [InlineKeyboardButton(text='🌷 Dᴇᴠᴇʟᴏᴘᴇʀ 🌷', url='https://t.me/BRANDEDKING82')]
+        [InlineKeyboardButton(text='🌷 Uᴘᴅᴀᴛᴇs 🌷', url='https://t.me/EAGLE_UPDTAES'), InlineKeyboardButton(text='🌷 Aʙᴏᴜᴛ 🌷', callback_data='about')],
+        [InlineKeyboardButton(text='🌷 Dᴇᴠᴇʟᴏᴘᴇʀ 🌷', url='https://t.me/its_deva_heree')]
         ]
 
     await message.reply_text(text=Txt.START_MSG.format(message.from_user.mention), reply_markup=InlineKeyboardMarkup(Btn))
