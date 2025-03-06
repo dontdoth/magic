@@ -1,132 +1,135 @@
 import os
 import time
 
-class Config(object):
-    # Pyrogram Client
-    API_ID    = int(os.environ.get("API_ID", ""))  # ⚠️ Required
-    API_HASH  = os.environ.get("API_HASH", "") # ⚠️ Required
-    BOT_TOKEN = os.environ.get("BOT_TOKEN", "") # ⚠️ Required
+class Config:
+    """تنظیمات اصلی برنامه"""
     
-    # Other Configs
+    # تنظیمات Pyrogram
+    API_ID = int(os.environ.get("API_ID", ""))  # ضروری ⚠️
+    API_HASH = os.environ.get("API_HASH", "")  # ضروری ⚠️
+    BOT_TOKEN = os.environ.get("BOT_TOKEN", "")  # ضروری ⚠️
+    
+    # سایر تنظیمات
     BOT_START_TIME = time.time()
-    OWNER    = int(os.environ.get("OWNER", "7538572906"))  # ⚠️ Required
-    SUDO = list(map(int, os.environ.get("SUDO", "7828753331").split()))  # ⚠️ Required
-    # Web Response Config
+    OWNER = int(os.environ.get("OWNER", "7538572906"))  # ضروری ⚠️
+    SUDO = list(map(int, os.environ.get("SUDO", "7828753331").split()))  # ضروری ⚠️
+    
+    # تنظیمات وب
     WEBHOOK = bool(os.environ.get("WEBHOOK", True))
     PORT = int(os.environ.get("PORT", "8080"))
 
-class Txt(object):
+class Txt:
+    """متن‌های مورد استفاده در ربات"""
 
     SEND_NUMBERS_MSG = """
-❪ SEND THE TOTAL NUMBER YOU HAVE ❫
+🔢 تعداد اکانت‌های خود را وارد کنید
 
-☛ How many Number do You have
+👉 چند اکانت تلگرام دارید؟
 """
 
     SEND_TARGET_CHANNEL = """
-( SEND THE TARGET CHANNEL LINK or USERNAME)
+📌 لینک یا نام کاربری کانال هدف را وارد کنید
 
-☛ For e.g :- <code> @ </code> or <code> https:/t.me/its_deva_heree </code>
+مثال: <code>@username</code> یا <code>https://t.me/username</code>
 """
 
     SEND_SESSION_MSG = """
-❪ SEND SESSOIN STRING ❫
+🔑 کد نشست (Session String) را وارد کنید
 
-☛ Generate Session String form @
-
-
+برای دریافت کد نشست به @StringSessionBot مراجعه کنید
 """
 
     SEND_API_ID = """
-❪ SEND API ID ❫
+🆔 API ID را وارد کنید
 
-☛ Api_id Get from my.telegram.org
+از my.telegram.org دریافت کنید
 """
-    SEND_API_HASH = """
-❪ SEND API HASH ❫
 
-☛ Api_hash Get from my.telegram.org
+    SEND_API_HASH = """
+🔑 API Hash را وارد کنید
+
+از my.telegram.org دریافت کنید
 """
 
     MAKE_CONFIG_DONE_MSG = """
-Your {} accounts has been added 👥
+✅ {} اکانت شما با موفقیت اضافه شد
 
-And Logined to the Target Channel/Group to Report it. ✅
+✅ اکانت‌ها به کانال/گروه هدف برای گزارش وارد شدند
 
-➜ Click the button bellow to see the Number of Telegram account you added.
+👇 برای مشاهده تعداد اکانت‌های اضافه شده روی دکمه زیر کلیک کنید
 """
 
     ADDED_ACCOUNT = """
-Your have added {} accounts 👥
+👥 شما {} اکانت اضافه کرده‌اید
 
-➜ Click the button bellow to see the More Info of the Telegram accounts which you haved added.
+👇 برای مشاهده اطلاعات بیشتر اکانت‌ها روی دکمه زیر کلیک کنید
 """
 
     ACCOUNT_INFO = """
-<b> Name :- </b> <code> {0} </code>
-<b> User Id :- </b> <code> {1} </code>
+<b>👤 نام:</b> <code>{0}</code>
+<b>🆔 شناسه کاربری:</b> <code>{1}</code>
 """
 
     REPORT_CHOICE = """
-❪ SELECT REASON FOR REPORT 👤 ❫
+⚠️ دلیل گزارش را انتخاب کنید:
 
-1. Report for child abuse
-2. Report for copyrighted content
-3. Report for impersonation
-4. Report an irrelevant geogroup
-5. Report an illegal durg
-6. Report for Violence
-7. Report for offensive person detail
-8. Reason for Pornography
-9. Report for spam
+1️⃣ سوء استفاده از کودکان
+2️⃣ محتوای دارای کپی‌رایت
+3️⃣ جعل هویت
+4️⃣ گروه نامرتبط
+5️⃣ مواد مخدر غیرقانونی
+6️⃣ خشونت
+7️⃣ اطلاعات شخصی توهین‌آمیز
+8️⃣ محتوای پورنوگرافی
+9️⃣ اسپم
 
-Whats your  reason: select 1-9 👇 
+👇 یک عدد بین 1 تا 9 انتخاب کنید
 """
 
     SEND_NO_OF_REPORT_MSG = """
-❪ SELECT NUMBER OF REPORTS 👤 ❫
+🔢 تعداد گزارش‌ها را وارد کنید
 
-**Send Number of reports which you want to report to this @{}**
+می‌خواهید چند بار @{} را گزارش کنید؟
 
-The bot will keep reporting to target channel or group until it's reach the number of report. 🎯
+🎯 ربات تا رسیدن به تعداد مورد نظر به گزارش ادامه می‌دهد
 """
 
     START_MSG = """
-Hɪ {},
+سلام {}،
 
-Tʜɪs Bᴏᴛ ɪs ғᴏʀ ᴛᴏ ʀᴇᴘᴏʀᴛ ᴄʜᴀɴɴᴇʟ ᴏʀ ɢʀᴏᴜᴘ ɪɴ ᴍᴀss ʟᴇᴠᴇʟ ᴛʜʀᴏᴜɢʜ ᴛᴇʟᴇɢʀᴀᴍ ᴀᴄᴄᴏᴜɴᴛ sᴇssɪᴏɴ sᴛʀɪɴɢ ᴡʜɪᴄʜ ʏᴏᴜ ᴄᴀɴ ɢᴇɴᴇʀᴀᴛᴇ ʙʏ @its_deva_heree
+🤖 این ربات برای گزارش دسته‌جمعی کانال یا گروه با استفاده از کد نشست اکانت‌های تلگرام است.
 
-Tʜɪs ʙᴏᴛ ɪs sᴏʟᴇʟʏ ᴄʀᴇᴀᴛᴇ ᴏʀ ᴅᴇᴠᴇʟᴏᴘᴇᴅ ʙʏ :- @its_deva_heree
+👨‍💻 توسعه‌دهنده: @lS_DEMIR
 """
 
     HELP_MSG = """
-🔆 HELP
+💡 راهنما
 
-📚 Available commands:
-⏣ /start - check I'm alive 
-⏣ /make_config - To Make Config 
-⏣ /del_config - Delete the Config
-⏣ /target - To see the target channel
-⏣ /see_accounts - See all the accounts you added
-⏣ /add_account - Add new accounts
-⏣ /report - Report the target
-⏣ /restart - Restart the bot
+📝 دستورات موجود:
+• /start - شروع کار با ربات
+• /make_config - ایجاد پیکربندی جدید
+• /del_config - حذف پیکربندی
+• /target - مشاهده کانال هدف
+• /see_accounts - مشاهده اکانت‌های اضافه شده
+• /add_account - افزودن اکانت جدید
+• /report - گزارش کانال هدف
+• /restart - راه‌اندازی مجدد ربات
 
-💢 Features:
-► Report a single channel or group with multiple Id's
-► Type of report option available
-► Facilitie to change the Target Channel or Group
-► Facilitie to add the multiples accounts after once you make config
-► All the accounts you added will automatically joined the target channel or group
-► No need to enter phone number, password or otp just send session string and that's it
-► Check the server status and resources
+✨ قابلیت‌ها:
+• گزارش یک کانال/گروه با چندین اکانت
+• انواع مختلف گزارش
+• امکان تغییر کانال/گروه هدف
+• افزودن اکانت‌های جدید پس از پیکربندی
+• عضویت خودکار اکانت‌ها در کانال هدف
+• فقط با کد نشست، بدون نیاز به شماره/رمز
+• نمایش وضعیت سرور
 """
 
     ABOUT_MSG = """
-- 𝖬𝗒 𝖭𝖺𝗆𝖾 : <a href=https://t.me/{}>{}</a>
-- 𝖢𝗋𝖾𝖺𝗍𝗈𝗋 : @its_deva_heree
-- 𝖫𝗂𝖻𝗋𝖺𝗋𝗒 : Pyrogram
-- 𝖫𝖺𝗇𝗀𝗎𝖺𝗀𝖾 : 𝖯𝗒𝗍𝗁𝗈𝗇 𝟥
-- 𝖣𝖺𝗍𝖺𝖡𝖺𝗌𝖾 : 𝖬𝗈𝗇𝗀𝗈𝖣𝖡
-- 𝖡𝖮𝖳 𝖲𝖾𝗋𝗏𝖾𝗋 : 𝖠𝗇𝗒𝖶𝗁𝖾𝗋𝖾
+📱 نام: <a href="https://t.me/{}">{}</a>
+👨‍💻 سازنده: @lS_DEMIR
+📚 کتابخانه: Pyrogram
+🐍 زبان: Python 3
+💾 دیتابیس: MongoDB
+🖥 سرور: Anywhere
 """
