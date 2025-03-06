@@ -8,154 +8,152 @@ from pyrogram.types import Message, ReplyKeyboardMarkup, ReplyKeyboardRemove
 from pyrogram.errors import MessageIdInvalid
 from info import Config, Txt
 
-
 config_path = Path("config.json")
 
+# دلایل گزارش
+REPORT_REASONS = {
+    '1': 'گزارش سوء استفاده از کودکان',
+    '2': 'گزارش محتوای دارای کپی‌رایت',
+    '3': 'گزارش جعل هویت',
+    '4': 'گزارش گروه نامرتبط',
+    '5': 'گزارش مواد مخدر غیرقانونی',
+    '6': 'گزارش خشونت',
+    '7': 'گزارش اطلاعات شخصی توهین‌آمیز',
+    '8': 'گزارش محتوای پورنوگرافی',
+    '9': 'گزارش اسپم'
+}
 
-async def Report_Function(No):
+async def send_report(reason_number: str):
+    """ارسال گزارش با دلیل مشخص شده"""
+    try:
+        reason = REPORT_REASONS[reason_number]
+        
+        process = subprocess.Popen(
+            ["python", "report.py", reason],
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE
+        )
+        
+        stdout, stderr = process.communicate()
+        
+        if process.wait() == 0:
+            print("خروجی دستور:", stdout)
+            return [stdout, True]
+        else:
+            print("خطا در اجرای دستور:", stderr)
+            return f"❌ خطا در ارسال گزارش:\n<code>{stderr}</code>"
+            
+    except Exception as e:
+        print(f"خطا: {e}")
+        return f"❌ خطای سیستمی: {e}"
 
-    listofchoise = ['Report for child abuse', 'Report for copyrighted content', 'Report for impersonation', 'Report an irrelevant geogroup',
-                    'Report an illegal durg', 'Report for Violence', 'Report for offensive person detail', 'Reason for Pornography', 'Report for spam"']
-    message = listofchoise[int(No) - 1]
-
-    # Run a shell command and capture its output
-    process = subprocess.Popen(
-        ["python", f"report.py",
-            f"{message}"],
-        stdout=subprocess.PIPE,
-        stderr=subprocess.PIPE,
-    )
-
-    # Use communicate() to interact with the process
-    stdout, stderr = process.communicate()
-
-    # Get the return code
-    return_code = process.wait()
-
-    # Check the return code to see if the command was successful
-    if return_code == 0:
-        # Print the output of the command
-        print("Command output:")
-        print(stdout)
-        return [stdout, True]
-
-    else:
-        # Print the error message if the command failed
-        print("Command failed with error:")
-        print(stderr)
-        return f"<b>Something Went Wrong Kindly Check your Inputs Whether You Have Filled Correctly or Not !</b>\n\n <code> {stderr} </code> \n ERROR"
-
-
-async def CHOICE_OPTION(bot, msg, number):
-
+async def handle_report_choice(bot: Client, msg: Message, reason_number: str):
+    """مدیریت انتخاب دلیل گزارش"""
+    
     if not config_path.exists():
-        return await msg.reply_text(text="**You don't have any config first make the config then you'll able to report**\n\n Use /make_config", reply_to_message_id=msg.id, reply_markup=ReplyKeyboardRemove())
+        return await msg.reply_text(
+            "⚠️ ابتدا باید پیکربندی را ایجاد کنید\n\nاز دستور /make_config استفاده کنید",
+            reply_markup=ReplyKeyboardRemove()
+        )
 
     with open(config_path, 'r', encoding='utf-8') as file:
         config = json.load(file)
 
+    # بررسی وجود گزارش در حال انجام
+    if Path('report.txt').exists():
+        return await msg.reply_text(
+            "⏳ یک گزارش در حال انجام است. لطفاً صبر کنید",
+            reply_to_message_id=msg.id
+        )
+
     try:
-        if Path('report.txt').exists():
-            return await msg.reply_text(text="**Already One Process is Ongoing Please Wait Until it's Finished ⏳**", reply_to_message_id=msg.id)
-
-        no_of_reports = await bot.ask(text=Txt.SEND_NO_OF_REPORT_MSG.format(config['Target']), chat_id=msg.chat.id, filters=filters.text, timeout=30, reply_markup=ReplyKeyboardRemove())
+        # دریافت تعداد گزارش
+        report_count = await bot.ask(
+            text=Txt.SEND_NO_OF_REPORT_MSG.format(config['Target']),
+            chat_id=msg.chat.id,
+            filters=filters.text,
+            timeout=30,
+            reply_markup=ReplyKeyboardRemove()
+        )
     except:
-        await bot.send_message(msg.from_user.id, "Error!!\n\nRequest timed out.\nRestart by using /report")
+        await bot.send_message(
+            msg.from_user.id,
+            "❌ درخواست منقضی شد\nلطفاً با /report دوباره تلاش کنید"
+        )
         return
 
-    ms = await bot.send_message(chat_id=msg.chat.id, text=f"**Please Wait**\n\n Have Patience ⏳", reply_to_message_id=msg.id, reply_markup=ReplyKeyboardRemove())
-    if str(no_of_reports.text).isnumeric():
+    status_msg = await bot.send_message(
+        chat_id=msg.chat.id,
+        text="⏳ لطفاً صبر کنید...",
+        reply_to_message_id=msg.id,
+        reply_markup=ReplyKeyboardRemove()
+    )
 
-        try:
-            i = 0
-            while i < int(no_of_reports.text):
-                result = await Report_Function(number)
-
-                if result[1]:
-                    # Assuming output is a bytes object
-                    output_bytes = result[0]
-                    # Decode bytes to string and replace "\r\n" with newlines
-                    output_string = output_bytes.decode(
-                        'utf-8').replace('\r\n', '\n')
-
-                    with open('report.txt', 'a+') as file:
-                        file.write(output_string)
-
-                    i += 1
-                    continue
-
-                else:
-                    await bot.send_message(chat_id=msg.chat.id, text=f"{result}", reply_to_message_id=msg.id)
-        except Exception as e:
-            print('Error on line {}'.format(
-                sys.exc_info()[-1].tb_lineno), type(e).__name__, e)
-            return await msg.reply_text(text=f"**{e}**\n\n ERROR !")
-
-    else:
-        await msg.reply_text(text='**Please Enter Valid Integer Number !**\n\n Try Again :- /report')
+    if not report_count.text.isnumeric():
+        await msg.reply_text(
+            "❌ لطفاً یک عدد معتبر وارد کنید\n\nدوباره تلاش کنید: /report"
+        )
         return
 
-    await ms.delete()
-    await msg.reply_text(text=f"Bot Successfully Reported To @{config['Target']} ✅\n\n{no_of_reports.text} Times")
-    file = open('report.txt', 'a')
-    file.write(
-        f"\n\n@{config['Target']} Channel or Group is Reported {no_of_reports.text} Times ✅")
-    file.close()
-    await bot.send_document(chat_id=msg.chat.id, document='report.txt', reply_to_message_id=msg.id)
+    try:
+        count = int(report_count.text)
+        for i in range(count):
+            result = await send_report(reason_number)
+            
+            if result[1]:
+                output = result[0].decode('utf-8').replace('\r\n', '\n')
+                with open('report.txt', 'a+') as file:
+                    file.write(output)
+            else:
+                await bot.send_message(
+                    chat_id=msg.chat.id,
+                    text=result,
+                    reply_to_message_id=msg.id
+                )
+                return
+
+    except Exception as e:
+        print(f'خطا در خط {sys.exc_info()[-1].tb_lineno}: {type(e).__name__} - {e}')
+        return await msg.reply_text(f"❌ خطا: {e}")
+
+    await status_msg.delete()
+    
+    # ارسال نتیجه
+    success_text = f"✅ گزارش با موفقیت به @{config['Target']} ارسال شد\n\n🔢 تعداد: {count} بار"
+    await msg.reply_text(success_text)
+    
+    # ذخیره لاگ
+    with open('report.txt', 'a') as file:
+        file.write(f"\n\n{success_text}")
+    
+    # ارسال فایل لاگ
+    await bot.send_document(
+        chat_id=msg.chat.id,
+        document='report.txt',
+        reply_to_message_id=msg.id
+    )
+    
     os.remove('report.txt')
 
-
 @Client.on_message(filters.private & filters.user(Config.OWNER) & filters.command('report'))
-async def handle_report(bot: Client, cmd: Message):
-
-    CHOICE = [
-        [("1"), ("2")], [("3"), ("4")], [("5"), ("6")], [("7"), ("8")], [("9")]
+async def start_report(bot: Client, msg: Message):
+    """شروع فرآیند گزارش"""
+    
+    keyboard = [
+        [("۱"), ("۲")], [("۳"), ("۴")], 
+        [("۵"), ("۶")], [("۷"), ("۸")],
+        [("۹")]
     ]
 
-    await bot.send_message(chat_id=cmd.from_user.id, text=Txt.REPORT_CHOICE, reply_to_message_id=cmd.id, reply_markup=ReplyKeyboardMarkup(CHOICE, resize_keyboard=True))
+    await bot.send_message(
+        chat_id=msg.from_user.id,
+        text=Txt.REPORT_CHOICE,
+        reply_to_message_id=msg.id,
+        reply_markup=ReplyKeyboardMarkup(keyboard, resize_keyboard=True)
+    )
 
-
-@Client.on_message(filters.regex("1"))
-async def one(bot: Client, msg: Message):
-
-    await CHOICE_OPTION(bot, msg, 1)
-
-
-@Client.on_message(filters.regex("2"))
-async def two(bot: Client, msg: Message):
-    await CHOICE_OPTION(bot, msg, 2)
-
-
-@Client.on_message(filters.regex("3"))
-async def three(bot: Client, msg: Message):
-    await CHOICE_OPTION(bot, msg, 3)
-
-
-@Client.on_message(filters.regex("4"))
-async def four(bot: Client, msg: Message):
-    await CHOICE_OPTION(bot, msg, 4)
-
-
-@Client.on_message(filters.regex("5"))
-async def five(bot: Client, msg: Message):
-    await CHOICE_OPTION(bot, msg, 5)
-
-
-@Client.on_message(filters.regex("6"))
-async def six(bot: Client, msg: Message):
-    await CHOICE_OPTION(bot, msg, 6)
-
-
-@Client.on_message(filters.regex("7"))
-async def seven(bot: Client, msg: Message):
-    await CHOICE_OPTION(bot, msg, 7)
-
-
-@Client.on_message(filters.regex("8"))
-async def eight(bot: Client, msg: Message):
-    await CHOICE_OPTION(bot, msg, 8)
-
-
-@Client.on_message(filters.regex("9"))
-async def nine(bot: Client, msg: Message):
-    await CHOICE_OPTION(bot, msg, 9)
+# مدیریت انتخاب‌های کاربر
+for number in range(1, 10):
+    @Client.on_message(filters.regex(str(number)))
+    async def handle_choice(bot: Client, msg: Message):
+        await handle_report_choice(bot, msg, msg.text)
