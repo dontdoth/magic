@@ -1,9 +1,107 @@
-"Report for child abuse" "Telegram This group publishes child pornography and violates Telegram standards by offending children. Please deal quickly"
-"Report for impersonation" "Merhaba Telegram ve saygın destek ekibi. Sizden yardım istiyorum. Bu kişi hesabımı ve kişisel bilgilerimi taklit etti ve pornografi yayınladı, arkadaşlarımı taciz etti ve bana zarar verdi. Sizden yardım etmenizi ve hesabını silmenizi rica ediyorum" 
-"Report for copyrighted content" "Welcome  Telegram Support.  This group violates property rights, as they made a similar group and impersonate my group in terms of name, picture, and group link as well, and they exploit users and force them to subscribe to pornographic and illegal channels.  We hope that you will close this group impersonating my group as soon as possible" 
-"Report an irrelevant geogroup" "Hey Telegram, This Channel publishes inappropriate 18+ porn videos and images, damages the minds of children and also touches the physical violence. Ban this channel as soon as possible"
-"Reason for Pornography" "Telegram This group publishes child pornography and violates Telegram standards by offending children. Please deal quickly. Please take appropriate measures to secure a suitable environment on the Telegram platform" 
-"Report an illegal durg" "This channel publishes personal data without prior permission The purpose of this is defamation and blackmail. Please block this channel immediately" 
-"Report for offensive person detail" "Hello, Telegram Company. This channel publishes violent images and clips that terrorize women and children and violate the privacy policy set by the company. We ask you to close the channel as  soon as possible Thank you very match" 
-"Report for spam" "Hi Telegram support. I would like to report this account that causes inconvenience to users in this group with its frequent and annoying messages that violate users  rights. I ask that you delete the account as soon as possible"
-"Report for Violence" "Hello, Telegram Company. This channel publishes violent images and clips that terrorize women and children and violate the privacy policy set by the company. We ask you to close the channel as  soon as possible Thank you very match" 
+REPORT_MESSAGES = {
+    "Report for child abuse": """
+Уважаемая поддержка Telegram,
+
+Данный канал активно распространяет материалы с сексуальной эксплуатацией несовершеннолетних, что является грубейшим нарушением не только правил Telegram, но и международного законодательства. Здесь регулярно публикуется детская порнография и контент, унижающий достоинство детей.
+
+Требуем немедленного закрытия канала и передачи данных правоохранительным органам для расследования преступной деятельности администраторов.
+
+С уважением, обеспокоенный пользователь.
+""",
+
+    "Report for impersonation": """
+Здравствуйте, уважаемая служба поддержки Telegram!
+
+Данный аккаунт занимается целенаправленной кражей личных данных и имперсонацией. Злоумышленники:
+- Полностью скопировали мой профиль
+- Распространяют порнографические материалы от моего имени
+- Осуществляют массовую рассылку спама моим контактам
+- Занимаются вымогательством и шантажом
+
+Прошу принять срочные меры по блокировке данного аккаунта и проведению расследования.
+""",
+
+    "Report for copyrighted content": """
+Уважаемая администрация Telegram,
+
+Настоящим заявляю о грубом нарушении авторских прав нашего сообщества. Нарушители:
+- Полностью скопировали оформление и контент нашей группы
+- Используют наши товарные знаки и интеллектуальную собственность
+- Распространяют нелегальный контент под видом нашего бренда
+- Вводят пользователей в заблуждение
+
+Требуем немедленного закрытия канала-нарушителя согласно DMCA.
+""",
+
+    "Report an irrelevant geogroup": """
+Уважаемая модерация Telegram,
+
+Данный канал систематически нарушает правила платформы:
+- Распространяет порнографический контент
+- Публикует материалы с насилием
+- Целенаправленно воздействует на несовершеннолетних
+- Игнорирует географические ограничения
+
+Требуем немедленной блокировки во избежание дальнейшего вреда.
+""",
+
+    "Reason for Pornography": """
+В службу безопасности Telegram,
+
+Экстренное обращение по поводу канала, который:
+- Массово распространяет детскую порнографию
+- Нарушает международное законодательство
+- Создает угрозу безопасности несовершеннолетних
+- Игнорирует все предупреждения
+
+Требуется срочное вмешательство и передача данных в правоохранительные органы.
+""",
+
+    "Report an illegal durg": """
+Уважаемая служба модерации Telegram,
+
+Данный канал занимается противоправной деятельностью:
+- Распространяет персональные данные без согласия
+- Осуществляет шантаж и вымогательство
+- Торгует запрещенными веществами
+- Нарушает множественные правила платформы
+
+Просим о немедленной блокировке и расследовании.
+""",
+
+    "Report for offensive person detail": """
+Администрации Telegram,
+
+Экстренное обращение о канале, который:
+- Публикует сцены жестокого насилия
+- Распространяет материалы, травмирующие детей
+- Нарушает права человека
+- Игнорирует правила конфиденциальности
+
+Требуется срочная блокировка для защиты пользователей.
+""",
+
+    "Report for spam": """
+Модерации Telegram,
+
+Данный аккаунт злостно нарушает правила:
+- Осуществляет массовую рассылку спама
+- Распространяет вредоносные ссылки
+- Нарушает работу групп и каналов
+- Игнорирует все предупреждения
+
+Просим о немедленной блокировке спамера.
+""",
+
+    "Report for Violence": """
+Службе безопасности Telegram,
+
+Срочное обращение о канале, распространяющем:
+- Сцены крайней жестокости и насилия
+- Материалы, травмирующие психику
+- Контент, нарушающий права человека
+- Призывы к противоправным действиям
+
+Требуется немедленная блокировка для защиты пользователей.
+"""
+}
