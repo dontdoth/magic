@@ -1,81 +1,127 @@
 import sys
-from pyrogram import Client, filters
-import asyncio
 import json
+import asyncio
+from typing import Optional
+from pyrogram import Client
 from pyrogram.raw.functions.account import ReportPeer
-from pyrogram.raw.types import *
+from pyrogram.raw.types import (
+    InputReportReasonChildAbuse,
+    InputReportReasonFake,
+    InputReportReasonCopyright,
+    InputReportReasonGeoIrrelevant,
+    InputReportReasonPornography,
+    InputReportReasonIllegalDrugs,
+    InputReportReasonSpam,
+    InputReportReasonPersonalDetails,
+    InputReportReasonViolence,
+    InputPeerChannel
+)
 
+# تعریف دلایل گزارش
+REPORT_REASONS = {
+    "Report for child abuse": InputReportReasonChildAbuse,
+    "Report for impersonation": InputReportReasonFake,
+    "Report for copyrighted content": InputReportReasonCopyright,
+    "Report an irrelevant geogroup": InputReportReasonGeoIrrelevant,
+    "Reason for Pornography": InputReportReasonPornography,
+    "Report an illegal durg": InputReportReasonIllegalDrugs,
+    "Report for offensive person detail": InputReportReasonSpam,
+    "Report for spam": InputReportReasonPersonalDetails,
+    "Report for Violence": InputReportReasonViolence
+}
 
-def get_reason(text):
-    if text == "Report for child abuse":
-        return InputReportReasonChildAbuse()
-    elif text == "Report for impersonation":
-        return InputReportReasonFake()
-    elif text == "Report for copyrighted content":
-        return InputReportReasonCopyright()
-    elif text == "Report an irrelevant geogroup":
-        return InputReportReasonGeoIrrelevant()
-    elif text == "Reason for Pornography":
-        return InputReportReasonPornography()
-    elif text == "Report an illegal durg":
-        return InputReportReasonIllegalDrugs()
-    elif text == "Report for offensive person detail":
-        return InputReportReasonSpam()
-    elif text == "Report for spam":
-        return InputReportReasonPersonalDetails()
-    elif text == "Report for Violence":
-        return InputReportReasonViolence()
+def get_report_reason(reason_text: str) -> Optional[object]:
+    """دریافت نوع گزارش بر اساس متن"""
+    reason_class = REPORT_REASONS.get(reason_text)
+    return reason_class() if reason_class else None
 
-#report = app.send(report_peer)
+async def report_channel(
+    app: Client,
+    channel_username: str,
+    reason_obj: object,
+    reason_text: str,
+    account_name: str
+) -> bool:
+    """ارسال گزارش برای یک کانال"""
+    try:
+        # دریافت اطلاعات کانال
+        peer = await app.resolve_peer(channel_username)
+        channel = InputPeerChannel(
+            channel_id=peer.channel_id,
+            access_hash=peer.access_hash
+        )
 
-async def main(message):
-     config = (json.load(open("config.json")))
-     resportreaso = message
-     resportreason = get_reason(message)
-    # resportreason = input("whats ur pepoet reason: ")
-     
-     pee = config['Target']
-     for account in config["accounts"]:
-        string = account["Session_String"]
-        Name = account['OwnerName']
-        async with Client(name="Session", session_string=string) as app:
-            try:
-                #await app.get_chat(-1001626004802)
-                peer = await app.resolve_peer(pee)
-                peer_id = peer.channel_id
-                access_hash = peer.access_hash
-                channel = InputPeerChannel(channel_id=peer_id, access_hash=access_hash)
-            except Exception as e:
-                print(e)
-            # elif dat.lower() == "user":
-            #     peer = await app.resolve_peer(pee)
-                
-            #     user_id = int(peer.user_id)
-            #     access_hash = str(peer.access_hash)
-            #     channel = InputPeerUser(user_id=user_id, access_hash=access_hash)
-            
-            report_peer = ReportPeer(
-                                        peer=channel, 
-                                        reason=resportreason, 
-                                        message=resportreaso
-                                    )
+        # ساخت و ارسال گزارش
+        report = ReportPeer(
+            peer=channel,
+            reason=reason_obj,
+            message=reason_text
+        )
+        result = await app.invoke(report)
 
-            try:
-                result = await app.invoke(report_peer)
-                print(result, 'Reported by Account', Name)
-                 
-            except BaseException as e:
-                print(e)
-                print("failed to report from :", Name)
-            
-                
+        print(f"✅ گزارش توسط اکانت {account_name} با موفقیت ارسال شد")
+        return True
+
+    except Exception as e:
+        print(f"❌ خطا در ارسال گزارش از اکانت {account_name}:")
+        print(f"علت: {str(e)}")
+        return False
+
+async def main(reason_text: str):
+    """تابع اصلی برنامه"""
+    try:
+        # خواندن پیکربندی
+        with open("config.json", "r", encoding="utf-8") as f:
+            config = json.load(f)
+
+        # دریافت نوع گزارش
+        reason_obj = get_report_reason(reason_text)
+        if not reason_obj:
+            print("❌ دلیل گزارش نامعتبر است")
+            return
+
+        # ارسال گزارش با همه اکانت‌ها
+        target = config['Target']
+        success_count = 0
+        
+        for account in config["accounts"]:
+            session = account["Session_String"]
+            name = account['OwnerName']
+
+            async with Client(
+                name="Session",
+                session_string=session
+            ) as app:
+                if await report_channel(
+                    app,
+                    target,
+                    reason_obj,
+                    reason_text,
+                    name
+                ):
+                    success_count += 1
+
+        # نمایش نتیجه
+        total = len(config["accounts"])
+        print(f"\n📊 نتیجه گزارش‌ها:")
+        print(f"✅ موفق: {success_count}")
+        print(f"❌ ناموفق: {total - success_count}")
+        print(f"📱 کل اکانت‌ها: {total}")
+
+    except FileNotFoundError:
+        print("❌ فایل پیکربندی (config.json) یافت نشد")
+    except json.JSONDecodeError:
+        print("❌ خطا در خواندن فایل پیکربندی")
+    except Exception as e:
+        print(f"❌ خطای غیرمنتظره: {str(e)}")
+
 if __name__ == "__main__":
-    # Check if the correct number of command-line arguments is provided
+    # بررسی پارامترهای ورودی
     if len(sys.argv) != 2:
-        print("Usage: python your_script.py <reason> <message>")
+        print("❌ استفاده صحیح:")
+        print("python script.py <reason>")
         sys.exit(1)
 
-    # Get command-line arguments
-    input_string = sys.argv[1]
-
-    asyncio.run(main(message=input_string))
+    # اجرای برنامه
+    input_reason = sys.argv[1]
+    asyncio.run(main(input_reason))
